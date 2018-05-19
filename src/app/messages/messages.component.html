@@ -1,0 +1,3 @@
+<p *ngFor="let message of messages; let i = index;">
+  <ngb-alert [type]="message.type" (close)="onCloseAlert(i)" dismiss-on-timeout="2500">{{ message.content }}</ngb-alert>
+</p>

@@ -1,0 +1,128 @@
+<div class="card">
+  <div class="card-body">
+    <h4 class="card-title">{{ editMode ? 'Izmena studenta' : 'Unos novog studenta'}}</h4>
+    <form [formGroup]="studentForm" (ngSubmit)="onSubmit()" autocomplete="off">
+      <div class="form-row">
+        <div class="form-group col-md-6">
+          <label for="firstName" class="col-form-label">Ime <span class="text-danger">*</span></label>
+          <input type="text" class="form-control" id="firstName"
+                 formControlName="firstName" [ngClass]="{ 'is-invalid': isEmptyFirstName() }">
+          <small *ngIf="isEmptyFirstName()" class="form-text text-danger">Ime ne sme da bude prazno polje.</small>
+        </div>
+        <div class="form-group col-md-6">
+          <label for="lastName" class="col-form-label">Prezime <span class="text-danger">*</span></label>
+          <input type="text" class="form-control" id="lastName"
+                 formControlName="lastName" [ngClass]="{ 'is-invalid': isEmptyLastName() }">
+          <small *ngIf="isEmptyLastName()" class="form-text text-danger">Prezime ne sme da bude prazno polje.</small>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group col-md-6">
+          <label for="number" class="col-form-label">Broj <span class="text-danger">*</span></label>
+          <input type="number" class="form-control" id="number"
+                 formControlName="number" [ngClass]="{ 'is-invalid': isEmptyNumber() || isNotNumberDigit() }">
+          <small *ngIf="isEmptyNumber()" class="form-text text-danger">Broj ne sme da bude prazno polje.</small>
+          <small *ngIf="isNotNumberDigit()" class="form-text text-danger">Broj može sadržati samo cifre.</small>
+        </div>
+        <div class="form-group col-md-6">
+          <label for="year" class="col-form-label">Godina upisa <span class="text-danger">*</span></label>
+          <input type="number" class="form-control" id="year"
+                 formControlName="year" [ngClass]="{ 'is-invalid': isEmptyNumber() || isNotYearDigit() }">
+          <small *ngIf="isEmptyYear()" class="form-text text-danger">Godina ne sme da bude prazno polje.</small>
+          <small *ngIf="isNotYearDigit()" class="form-text text-danger">Godina može sadržati samo cifre.</small>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group col-md-6">
+          <label for="studyField" class="col-form-label">Smer <span class="text-danger">*</span></label>
+          <input type="text" class="form-control" id="studyField"
+                 formControlName="studyField" [ngClass]="{ 'is-invalid': isEmptyStudyField() }">
+          <small *ngIf="isEmptyStudyField()" class="form-text text-danger">Smer ne sme da bude prazno polje.</small>
+        </div>
+        <div class="form-group col-md-6">
+          <label for="espb" class="col-form-label">Broj ESPB <span class="text-danger">*</span></label>
+          <input type="number" class="form-control" id="espb"
+                 formControlName="espb" [ngClass]="{ 'is-invalid': isEmptyEspb() || isNotEspbDigit() }">
+          <small *ngIf="isEmptyEspb()" class="form-text text-danger">Broj ESPB ne sme da bude prazno polje.</small>
+          <small *ngIf="isNotEspbDigit()" class="form-text text-danger">Broj ESPB može sadržati samo cifre.</small>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group col-md-7">
+          <label for="email" class="col-form-label">Email <span class="text-danger">*</span></label>
+          <input type="email" class="form-control" id="email"
+                 formControlName="email" [ngClass]="{ 'is-invalid': isEmptyEmail() || isNotEmailValid() }">
+          <small *ngIf="isEmptyEmail()" class="form-text text-danger">Email ne sme da bude prazno polje.</small>
+          <small *ngIf="isNotEmailValid()" class="form-text text-danger">Email mora biti u formatu
+            example@example.com.
+          </small>
+        </div>
+        <div class="form-group col-md-5">
+          <label for="phoneNumber" class="col-form-label">Broj telefona <span class="text-danger">*</span></label>
+          <input type="text" class="form-control" id="phoneNumber"
+                 formControlName="phoneNumber"
+                 [ngClass]="{ 'is-invalid': isEmptyPhoneNumber() || isNotPhoneNumberValid() }">
+          <small *ngIf="isEmptyPhoneNumber()" class="form-text text-danger">Broj telefona ne sme da bude prazno polje.
+          </small>
+          <small *ngIf="isNotPhoneNumberValid()" class="form-text text-danger">Broj telefona mora biti u formatu
+            064/1231231.
+          </small>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group col-md-6">
+          <label for="birthPlace" class="col-form-label">Mesto rođenja <span class="text-danger">*</span></label>
+          <input type="text" class="form-control" id="birthPlace"
+                 formControlName="birthPlace"
+                 [ngClass]="{ 'is-invalid': isEmptyBirthPlace() || isNotInitCapBirthPlace() }"
+                 [ngbTypeahead]="search">
+          <small *ngIf="isEmptyBirthPlace()" class="form-text text-danger">Mesto rođenja ne sme da bude prazno polje.
+          </small>
+          <small *ngIf="isNotInitCapBirthPlace()" class="form-text text-danger">Naziv mesta mora početi velikim
+            slovom.
+          </small>
+        </div>
+        <div class="form-group col-md-6">
+          <label for="livingPlace" class="col-form-label">Mesto stanovanja <span class="text-danger">*</span></label>
+          <input type="text" class="form-control" id="livingPlace"
+                 formControlName="livingPlace"
+                 [ngClass]="{ 'is-invalid': isEmptyLivingPlace() || isNotInitCapLivingPlace() }"
+                 [ngbTypeahead]="search">
+          <small *ngIf="isEmptyLivingPlace()" class="form-text text-danger">Mesto stanovanja ne sme da bude prazno
+            polje.
+          </small>
+          <small *ngIf="isNotInitCapLivingPlace()" class="form-text text-danger">Naziv mesta mora početi velikim slovom.
+          </small>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group col-md-12">
+          <label for="adress" class="col-form-label">Adresa <span class="text-danger">*</span></label>
+          <input type="text" class="form-control" id="adress"
+                 formControlName="adress" [ngClass]="{ 'is-invalid': isEmptyAdress() }">
+          <small *ngIf="isEmptyAdress()" class="form-text text-danger">Adresa ne sme da bude prazno polje.</small>
+        </div>
+      </div>
+      <button type="submit" class="btn btn-primary" style="margin-right: 5px;"
+              [disabled]="!studentForm.valid">Sačuvaj
+      </button>
+      <button type="button" class="btn btn-danger" (click)="onCancel()">Odustani</button>
+    </form>
+  </div>
+</div>
+
+<ng-template #confirmDialog let-close="close">
+  <div class="modal-header">
+    <h4 class="modal-title">Potvrda napuštanja stranice</h4>
+    <button type="button" class="close" aria-label="Close" (click)="close(false)">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <p>Da li ste sigurni da želite da napustite stranicu? <b>Napomena:</b> Promene neće biti sačuvane!</p>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-outline-primary" (click)="close(true)">Da</button>
+    <button type="button" class="btn btn-outline-secondary" (click)="close(false)">Ne</button>
+  </div>
+</ng-template>

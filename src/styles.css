@@ -1,0 +1,23 @@
+a {
+  cursor: pointer;
+}
+
+html {
+  position: relative;
+  min-height: 100%;
+}
+
+body {
+  margin-bottom: 60px;
+}
+
+.container {
+  width: auto;
+  padding: 0 15px;
+}
+
+@media (max-width: 768px) {
+  [class*="col-"] {
+    margin-bottom: 15px;
+  }
+}
