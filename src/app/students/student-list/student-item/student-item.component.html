@@ -1,13 +1,13 @@
 <div class="list-group">
   <a class="list-group-item list-group-item-action flex-column align-items-start"
-     routerLink="/students/{{ index }}" routerLinkActive="active">
+     routerLink="/students/{{ student.id }}" routerLinkActive="active">
     <div class="d-flex w-100 justify-content-between">
       <h5 class="mb-1">{{ student.lastName }} {{ student.firstName }}</h5>
       <small>{{ student.number }}/{{ student.year }}</small>
     </div>
     <p class="mb-1"><i>{{ student.email }}</i></p>
     <div class="d-flex w-100 justify-content-between">
-      <small>240 ESPB</small>
+      <small>{{ student.espb }} ESPB</small>
       <small>
         {{ student.studyField }}
       </small>

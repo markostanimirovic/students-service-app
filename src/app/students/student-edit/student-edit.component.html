@@ -1,5 +1,6 @@
 <div class="card">
   <div class="card-body">
+    <ngx-loading [show]="loading"></ngx-loading>
     <h4 class="card-title">{{ editMode ? 'Izmena studenta' : 'Unos novog studenta'}}</h4>
     <form [formGroup]="studentForm" (ngSubmit)="onSubmit()" autocomplete="off">
       <div class="form-row">

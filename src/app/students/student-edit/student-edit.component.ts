@@ -1,86 +1,117 @@
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, CanDeactivate, Params, Router } from '@angular/router';
-import { StudentsFakeService } from '../../services/data/students-fake.service';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { PlacesFakeService } from '../../services/data/places-fake.service';
-import { Observable } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/internal/operators';
 import { MessagesService } from '../../services/messages.service';
-import { b } from '@angular/core/src/render3';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { CanComponentDeactivate } from '../../services/guards/can-deactivate-guard.service';
+import { StudentsService } from '../../services/data/students.service';
+import { Student } from '../../models/student.model';
+import { PlacesService } from '../../services/data/places.service';
 
 @Component({
   selector: 'app-student-edit',
   templateUrl: './student-edit.component.html',
   styleUrls: ['./student-edit.component.css']
 })
-export class StudentEditComponent implements OnInit, CanComponentDeactivate {
+export class StudentEditComponent implements OnInit, CanComponentDeactivate, OnDestroy {
 
   @ViewChild('confirmDialog') confirmDialog: ElementRef;
   studentForm: FormGroup;
-  index: number;
+  id: string;
   editMode = false;
   places: string[];
   formButtonClicked = false;
+  getByIdSubscription: Subscription;
+  insertedStudentSubscription: Subscription;
+  updatedStudentSubscription: Subscription;
+  placesUpdatedSubscription: Subscription;
+  loading = false;
 
   constructor(private route: ActivatedRoute, private router: Router,
-              private studentsService: StudentsFakeService,
-              private placesService: PlacesFakeService,
+              private studentsService: StudentsService,
+              private placesService: PlacesService,
               private messagesService: MessagesService,
               private modalService: NgbModal) { }
 
   ngOnInit() {
-    this.places = this.placesService.getAll();
-    this.route.params
-      .subscribe((params: Params) => {
-        this.index = +params['id'];
-        this.editMode = params['id'] != null;
-        this.initForm();
+    this.route.params.subscribe((params: Params) => {
+      this.id = params['id'];
+      this.editMode = params['id'] != null;
+      if (this.editMode) {
+        this.loading = true;
+        this.studentsService.getById(this.id);
+        this.fillForm();
+      }
+      this.initForm();
+      this.placesService.getAll();
+      this.placesUpdatedSubscription = this.placesService.placesUpdated.subscribe((places: string[]) => {
+        this.places = places;
       });
+    });
+
+    this.insertedStudentSubscription = this.studentsService.insertedStudent.subscribe(() => {
+      this.router.navigate(['../'], { relativeTo: this.route });
+    });
+
+    this.updatedStudentSubscription = this.studentsService.updatedStudent.subscribe(() => {
+      this.router.navigate(['../'], { relativeTo: this.route });
+    });
+
   }
 
   private initForm() {
-    let firstName: string = null;
-    let lastName: string = null;
-    let year: number = null;
-    let number: number = null;
-    let birthPlace: string = null;
-    let livingPlace: string = null;
-    let adress: string = null;
-    let espb: number = null;
-    let phoneNumber: string = null;
-    let email: string = null;
-    let studyField: string = null;
-
-    if (this.editMode) {
-      const student = this.studentsService.get(this.index);
-      firstName = student.firstName;
-      lastName = student.lastName;
-      year = student.year;
-      number = student.number;
-      birthPlace = student.birthPlace;
-      livingPlace = student.livingPlace;
-      adress = student.adress;
-      espb = student.espb;
-      phoneNumber = student.phoneNumber;
-      email = student.email;
-      studyField = student.studyField;
-    }
-
     this.studentForm = new FormGroup({
-      'firstName': new FormControl(firstName, [Validators.required]),
-      'lastName': new FormControl(lastName, [Validators.required]),
-      'year': new FormControl(year, [Validators.required, Validators.pattern(/^\d+$/)]),
-      'number': new FormControl(number, [Validators.required, Validators.pattern(/^\d+$/)]),
-      'birthPlace': new FormControl(birthPlace, [Validators.required, this.initCap]),
-      'livingPlace': new FormControl(livingPlace, [Validators.required, this.initCap]),
-      'adress': new FormControl(adress, [Validators.required]),
-      'espb': new FormControl(espb, [Validators.required, Validators.pattern(/^\d+$/)]),
-      'phoneNumber': new FormControl(phoneNumber, [Validators.required,
-        Validators.pattern(/^\(?([0-9]{3})\)?[/. ]([0-9]{6,7})$/)]),
-      'email': new FormControl(email, [Validators.required, Validators.email]),
-      'studyField': new FormControl(studyField, [Validators.required])
+      'firstName': new FormControl('', [Validators.required]),
+      'lastName': new FormControl('', [Validators.required]),
+      'year': new FormControl('', [Validators.required, Validators.pattern(/^\d+$/)]),
+      'number': new FormControl('', [Validators.required, Validators.pattern(/^\d+$/)]),
+      'birthPlace': new FormControl('',
+        [Validators.required, Validators.pattern(/^[A-ZČĆŽŠĐ]([a-zčćžšđ])+([ ][A-ZČĆŽŠĐ][a-zčćžšđ]+)*$/)]),
+      'livingPlace': new FormControl('',
+        [Validators.required, Validators.pattern(/^[A-ZČĆŽŠĐ]([a-zčćžšđ])+([ ][A-ZČĆŽŠĐ][a-zčćžšđ]+)*$/)]),
+      'adress': new FormControl('', [Validators.required]),
+      'espb': new FormControl('', [Validators.required, Validators.pattern(/^\d+$/)]),
+      'phoneNumber': new FormControl('', [Validators.required,
+        Validators.pattern(/^[0-9]{3}[/][0-9]{6,7}$/)]),
+      'email': new FormControl('', [Validators.required, Validators.email]),
+      'studyField': new FormControl('', [Validators.required])
+    });
+  }
+
+  private fillForm() {
+    this.studentsService.studentById.subscribe((student: Student) => {
+      this.loading = false;
+      const firstName = student.firstName;
+      const lastName = student.lastName;
+      const year = student.year;
+      const number = student.number;
+      const birthPlace = student.birthPlace;
+      const livingPlace = student.livingPlace;
+      const adress = student.adress;
+      const espb = student.espb;
+      const phoneNumber = student.phoneNumber;
+      const email = student.email;
+      const studyField = student.studyField;
+
+      this.studentForm = new FormGroup({
+        'firstName': new FormControl(firstName, [Validators.required]),
+        'lastName': new FormControl(lastName, [Validators.required]),
+        'year': new FormControl(year, [Validators.required, Validators.pattern(/^\d+$/)]),
+        'number': new FormControl(number, [Validators.required, Validators.pattern(/^\d+$/)]),
+        'birthPlace': new FormControl(birthPlace,
+          [Validators.required, Validators.pattern(/^[A-ZČĆŽŠĐ]([a-zčćžšđ])+([ ][A-ZČĆŽŠĐ][a-zčćžšđ]+)*$/)]),
+        'livingPlace': new FormControl(livingPlace,
+          [Validators.required, Validators.pattern(/^[A-ZČĆŽŠĐ]([a-zčćžšđ])+([ ][A-ZČĆŽŠĐ][a-zčćžšđ]+)*$/)]),
+        'adress': new FormControl(adress, [Validators.required]),
+        'espb': new FormControl(espb, [Validators.required, Validators.pattern(/^\d+$/)]),
+        'phoneNumber': new FormControl(phoneNumber, [Validators.required,
+          Validators.pattern(/^[0-9]{3}[/][0-9]{6,7}$/)]),
+        'email': new FormControl(email, [Validators.required, Validators.email]),
+        'studyField': new FormControl(studyField, [Validators.required])
+      });
+
     });
   }
 
@@ -89,11 +120,7 @@ export class StudentEditComponent implements OnInit, CanComponentDeactivate {
       debounceTime(200),
       distinctUntilChanged(),
       map(term => term.length < 1 ? []
-        : this.places.filter(v => v.toLowerCase().indexOf(term.toLowerCase()) > -1).slice(0, 10)))
-
-  initCap = (control: FormControl): { [key: string]: boolean } =>
-    (control.value && control.value.charAt(0) === control.value.charAt(0).toUpperCase()) ?
-      null : { 'notInitCap': true }
+        : this.places.filter(v => v.toLowerCase().indexOf(term.toLowerCase()) > -1).slice(0, 10)));
 
   isEmptyFirstName() {
     return this.studentForm.hasError('required', ['firstName'])
@@ -129,8 +156,10 @@ export class StudentEditComponent implements OnInit, CanComponentDeactivate {
   }
 
   isNotInitCapBirthPlace() {
-    return this.studentForm.hasError('notInitCap', ['birthPlace'])
+    return this.studentForm.hasError('pattern', ['birthPlace'])
       && !this.isEmptyBirthPlace() && this.studentForm.get('birthPlace').touched;
+    // return this.studentForm.hasError('notInitCap', ['birthPlace'])
+    //   && !this.isEmptyBirthPlace() && this.studentForm.get('birthPlace').touched;
   }
 
   isEmptyLivingPlace() {
@@ -139,8 +168,10 @@ export class StudentEditComponent implements OnInit, CanComponentDeactivate {
   }
 
   isNotInitCapLivingPlace() {
-    return this.studentForm.hasError('notInitCap', ['livingPlace'])
+    return this.studentForm.hasError('pattern', ['livingPlace'])
       && !this.isEmptyLivingPlace() && this.studentForm.get('livingPlace').touched;
+    // return this.studentForm.hasError('notInitCap', ['livingPlace'])
+    //   && !this.isEmptyLivingPlace() && this.studentForm.get('livingPlace').touched;
   }
 
   isEmptyAdress() {
@@ -185,20 +216,12 @@ export class StudentEditComponent implements OnInit, CanComponentDeactivate {
   onSubmit() {
     if (this.studentForm.valid) {
       this.formButtonClicked = true;
-      let word = 'dodali novog';
       if (this.editMode) {
-        this.studentsService.update(this.index, this.studentForm.value);
-        word = 'izmenili';
+        this.studentsService.update(this.id, this.studentForm.value);
       } else {
-        this.studentsService.add(this.studentForm.value);
+        this.studentsService.insert(this.studentForm.value);
       }
-      this.messagesService.pushMessage({
-        content: `Uspešno ste ${word} studenta
-      ${this.studentForm.value.lastName} ${this.studentForm.value.firstName}
-      ${this.studentForm.value.number}/${this.studentForm.value.year}`, type: 'success'
-      });
-      this.placesService.addIfNotExist([this.studentForm.value.livingPlace, this.studentForm.value.birthPlace]);
-      this.router.navigate(['../', { relativeTo: this.route }]);
+      this.placesService.insert([this.studentForm.value.livingPlace, this.studentForm.value.birthPlace]);
     }
   }
 
@@ -213,6 +236,15 @@ export class StudentEditComponent implements OnInit, CanComponentDeactivate {
         .result.then((result: boolean) => result);
     }
     return true;
+  }
+
+  ngOnDestroy() {
+    if (this.getByIdSubscription) {
+      this.getByIdSubscription.unsubscribe();
+    }
+    this.insertedStudentSubscription.unsubscribe();
+    this.updatedStudentSubscription.unsubscribe();
+    this.placesUpdatedSubscription.unsubscribe();
   }
 
 }

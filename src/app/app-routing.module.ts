@@ -5,7 +5,6 @@ import { StudentsComponent } from './students/students.component';
 import { StudentStartComponent } from './students/student-start/student-start.component';
 import { StudentDetailComponent } from './students/student-detail/student-detail.component';
 import { StudentEditComponent } from './students/student-edit/student-edit.component';
-import { TeachersComponent } from './teachers/teachers.component';
 import { CanDeactivateGuard } from './services/guards/can-deactivate-guard.service';
 
 const appRoutes: Routes = [
@@ -19,7 +18,6 @@ const appRoutes: Routes = [
       { path: ':id/edit', component: StudentEditComponent, canDeactivate: [CanDeactivateGuard] }
     ]
   },
-  { path: 'teachers', component: TeachersComponent },
 ];
 
 @NgModule({

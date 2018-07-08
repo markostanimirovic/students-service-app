@@ -3,6 +3,8 @@ import { BrowserModule } from '@angular/platform-browser';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { AppRoutingModule } from './app-routing.module';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { HttpClientModule } from '@angular/common/http';
+import { LoadingModule } from 'ngx-loading';
 
 import { AppComponent } from './app.component';
 import { HeaderComponent } from './header/header.component';
@@ -15,11 +17,10 @@ import { StudentEditComponent } from './students/student-edit/student-edit.compo
 import { StudentDetailComponent } from './students/student-detail/student-detail.component';
 import { StudentStartComponent } from './students/student-start/student-start.component';
 import { MessagesComponent } from './messages/messages.component';
+import { StudentThesisComponent } from './students/student-thesis/student-thesis.component';
 
 import { StudentsService } from './services/data/students.service';
-import { StudentsFakeService } from './services/data/students-fake.service';
 import { MessagesService } from './services/messages.service';
-import { PlacesFakeService } from './services/data/places-fake.service';
 import { PlacesService } from './services/data/places.service';
 
 @NgModule({
@@ -35,18 +36,21 @@ import { PlacesService } from './services/data/places.service';
     StudentDetailComponent,
     StudentStartComponent,
     MessagesComponent,
+    StudentThesisComponent,
   ],
   imports: [
     BrowserModule,
     NgbModule.forRoot(),
     AppRoutingModule,
     FormsModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    HttpClientModule,
+    LoadingModule
   ],
   providers: [
-    StudentsService, StudentsFakeService,
-    MessagesService, PlacesService,
-    PlacesFakeService
+    StudentsService,
+    MessagesService,
+    PlacesService
   ],
   bootstrap: [AppComponent]
 })

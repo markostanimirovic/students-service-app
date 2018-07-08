@@ -1,17 +1,20 @@
 <div class="card">
   <div class="card-body">
-    <h4 class="card-title">{{ student.lastName }} {{ student.firstName }}</h4>
-    <p><b>Broj indeksa:</b> {{ student.number }}/{{ student.year }}</p>
-    <p><b>Smer:</b> {{ student.studyField }}</p>
-    <p><b>Broj ESPB:</b> {{ student.espb }}</p>
-    <p><b>Email:</b> {{ student.email }}</p>
-    <p><b>Broj telefona:</b> {{ student.phoneNumber }}</p>
-    <p><b>Mesto rođenja:</b> {{ student.birthPlace }}</p>
-    <p><b>Mesto stanovanja:</b> {{ student.livingPlace }}</p>
-    <p><b>Adresa:</b> {{ student.adress }}</p>
+    <ngx-loading [show]="loading"></ngx-loading>
+    <div *ngIf="student">
+      <h4 class="card-title">{{ student.lastName }} {{ student.firstName }}</h4>
+      <p><b>Broj indeksa:</b> {{ student.number }}/{{ student.year }}</p>
+      <p><b>Smer:</b> {{ student.studyField }}</p>
+      <p><b>Broj ESPB:</b> {{ student.espb }}</p>
+      <p><b>Email:</b> {{ student.email }}</p>
+      <p><b>Broj telefona:</b> {{ student.phoneNumber }}</p>
+      <p><b>Mesto rođenja:</b> {{ student.birthPlace }}</p>
+      <p><b>Mesto stanovanja:</b> {{ student.livingPlace }}</p>
+      <p><b>Adresa:</b> {{ student.adress }}</p>
 
-    <button type="button" class="btn btn-primary" style="margin-right: 5px;" (click)="onEdit()">Izmeni</button>
-    <button type="button" class="btn btn-danger" (click)="onDelete()">Obriši</button>
+      <button type="button" class="btn btn-primary" style="margin-right: 5px;" (click)="onEdit()">Izmeni</button>
+      <button type="button" class="btn btn-danger" (click)="onDelete()">Obriši</button>
+    </div>
   </div>
 </div>
 

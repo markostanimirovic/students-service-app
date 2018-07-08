@@ -1,7 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { StudentsFakeService } from '../../services/data/students-fake.service';
 import { Student } from '../../models/student.model';
 import { Subscription } from 'rxjs';
+import { StudentsService } from '../../services/data/students.service';
 
 @Component({
   selector: 'app-student-list',
@@ -11,18 +11,23 @@ import { Subscription } from 'rxjs';
 export class StudentListComponent implements OnInit, OnDestroy {
 
   students: Student[];
-  studentsChangedSubscription: Subscription;
+  studentsUpdatedSubscription: Subscription;
+  loading = false;
 
-  constructor(private studentsService: StudentsFakeService) {}
+  constructor(private studentsService: StudentsService) { }
 
   ngOnInit() {
-    this.students = this.studentsService.getAll();
-    this.studentsChangedSubscription = this.studentsService.studentsChanged
-      .subscribe((students: Student[]) => this.students = students);
+    this.loading = true;
+    this.studentsService.getAll();
+    this.studentsUpdatedSubscription = this.studentsService.studentsUpdated
+      .subscribe((students: Student[]) => {
+        this.students = students;
+        this.loading = false;
+      });
   }
 
   ngOnDestroy() {
-    this.studentsChangedSubscription.unsubscribe();
+    this.studentsUpdatedSubscription.unsubscribe();
   }
 
 }
