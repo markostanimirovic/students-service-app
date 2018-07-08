@@ -17,7 +17,6 @@ import { StudentEditComponent } from './students/student-edit/student-edit.compo
 import { StudentDetailComponent } from './students/student-detail/student-detail.component';
 import { StudentStartComponent } from './students/student-start/student-start.component';
 import { MessagesComponent } from './messages/messages.component';
-import { StudentThesisComponent } from './students/student-thesis/student-thesis.component';
 
 import { StudentsService } from './services/data/students.service';
 import { MessagesService } from './services/messages.service';
@@ -36,7 +35,6 @@ import { PlacesService } from './services/data/places.service';
     StudentDetailComponent,
     StudentStartComponent,
     MessagesComponent,
-    StudentThesisComponent,
   ],
   imports: [
     BrowserModule,
