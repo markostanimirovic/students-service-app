@@ -158,8 +158,6 @@ export class StudentEditComponent implements OnInit, CanComponentDeactivate, OnD
   isNotInitCapBirthPlace() {
     return this.studentForm.hasError('pattern', ['birthPlace'])
       && !this.isEmptyBirthPlace() && this.studentForm.get('birthPlace').touched;
-    // return this.studentForm.hasError('notInitCap', ['birthPlace'])
-    //   && !this.isEmptyBirthPlace() && this.studentForm.get('birthPlace').touched;
   }
 
   isEmptyLivingPlace() {
@@ -170,8 +168,6 @@ export class StudentEditComponent implements OnInit, CanComponentDeactivate, OnD
   isNotInitCapLivingPlace() {
     return this.studentForm.hasError('pattern', ['livingPlace'])
       && !this.isEmptyLivingPlace() && this.studentForm.get('livingPlace').touched;
-    // return this.studentForm.hasError('notInitCap', ['livingPlace'])
-    //   && !this.isEmptyLivingPlace() && this.studentForm.get('livingPlace').touched;
   }
 
   isEmptyAdress() {

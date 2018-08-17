@@ -3,7 +3,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { AppRoutingModule } from './app-routing.module';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { HttpClientModule } from '@angular/common/http';
+import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { LoadingModule } from 'ngx-loading';
 
 import { AppComponent } from './app.component';
@@ -17,10 +17,13 @@ import { StudentEditComponent } from './students/student-edit/student-edit.compo
 import { StudentDetailComponent } from './students/student-detail/student-detail.component';
 import { StudentStartComponent } from './students/student-start/student-start.component';
 import { MessagesComponent } from './messages/messages.component';
+import { LoginComponent } from './login/login.component';
 
 import { StudentsService } from './services/data/students.service';
 import { MessagesService } from './services/messages.service';
 import { PlacesService } from './services/data/places.service';
+import { AuthService } from './services/guards/auth.service';
+import { AuthInterceptor } from './services/interceptors/auth-interceptor';
 
 @NgModule({
   declarations: [
@@ -35,6 +38,7 @@ import { PlacesService } from './services/data/places.service';
     StudentDetailComponent,
     StudentStartComponent,
     MessagesComponent,
+    LoginComponent,
   ],
   imports: [
     BrowserModule,
@@ -48,7 +52,9 @@ import { PlacesService } from './services/data/places.service';
   providers: [
     StudentsService,
     MessagesService,
-    PlacesService
+    PlacesService,
+    AuthService,
+    { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true }
   ],
   bootstrap: [AppComponent]
 })

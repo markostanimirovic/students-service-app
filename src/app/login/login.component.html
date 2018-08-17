@@ -1,0 +1,32 @@
+<div class="col-lg-6" style="margin: auto">
+  <div class="card">
+    <div class="card-body">
+      <ngx-loading [show]="loading"></ngx-loading>
+      <h4 class="card-title">Prijava</h4>
+      <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" autocomplete="off">
+        <div class="form-row">
+          <div class="form-group col-md-12">
+            <label for="email" class="col-form-label">Email <span class="text-danger">*</span></label>
+            <input type="email" class="form-control" id="email"
+                   formControlName="email" [ngClass]="{ 'is-invalid': isEmptyEmail() || isNotEmailValid() }">
+            <small *ngIf="isEmptyEmail()" class="form-text text-danger">Email ne sme da bude prazno polje.</small>
+            <small *ngIf="isNotEmailValid()" class="form-text text-danger">Email mora biti u formatu
+              example@example.com.
+            </small>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group col-md-12">
+            <label for="password" class="col-form-label">Lozinka <span class="text-danger">*</span></label>
+            <input type="password" class="form-control" id="password"
+                   formControlName="password" [ngClass]="{ 'is-invalid': isEmptyPassword() }">
+            <small *ngIf="isEmptyPassword()" class="form-text text-danger">Lozinka ne sme da bude prazno polje.</small>
+          </div>
+        </div>
+        <button type="submit" class="btn btn-primary" [disabled]="!loginForm.valid">
+          Prijavi se
+        </button>
+      </form>
+    </div>
+  </div>
+</div>

@@ -6,11 +6,13 @@ import { StudentStartComponent } from './students/student-start/student-start.co
 import { StudentDetailComponent } from './students/student-detail/student-detail.component';
 import { StudentEditComponent } from './students/student-edit/student-edit.component';
 import { CanDeactivateGuard } from './services/guards/can-deactivate-guard.service';
+import { LoginComponent } from './login/login.component';
+import { AuthGuard } from './services/guards/auth-guard.service';
 
 const appRoutes: Routes = [
   { path: '', component: HomeComponent },
   {
-    path: 'students', component: StudentsComponent,
+    path: 'students', component: StudentsComponent, canActivate: [AuthGuard],
     children: [
       { path: '', component: StudentStartComponent },
       { path: 'new', component: StudentEditComponent, canDeactivate: [CanDeactivateGuard] },
@@ -18,12 +20,14 @@ const appRoutes: Routes = [
       { path: ':id/edit', component: StudentEditComponent, canDeactivate: [CanDeactivateGuard] }
     ]
   },
+  { path: 'login', component: LoginComponent },
+  { path: '**', redirectTo: '/' }
 ];
 
 @NgModule({
   imports: [RouterModule.forRoot(appRoutes)],
   exports: [RouterModule],
-  providers: [CanDeactivateGuard]
+  providers: [CanDeactivateGuard, AuthGuard]
 })
 export class AppRoutingModule {
 

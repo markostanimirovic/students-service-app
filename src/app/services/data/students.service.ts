@@ -5,6 +5,7 @@ import { Subject } from 'rxjs';
 import { map } from 'rxjs/internal/operators';
 import { MessagesService } from '../messages.service';
 import { environment } from '../../../environments/environment';
+import { AuthService } from '../guards/auth.service';
 
 const BACKEND_URL = environment.apiUrl + '/students/';
 
@@ -17,7 +18,9 @@ export class StudentsService {
   insertedStudent = new Subject();
   updatedStudent = new Subject();
 
-  constructor(private http: HttpClient, private messagesService: MessagesService) { }
+  constructor(private http: HttpClient,
+              private messagesService: MessagesService,
+              private authService: AuthService) { }
 
   getAll() {
     this.http.get(BACKEND_URL)
