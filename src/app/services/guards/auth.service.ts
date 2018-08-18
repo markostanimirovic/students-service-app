@@ -35,6 +35,14 @@ export class AuthService {
     return !!this.token;
   }
 
+  autoAuthUser() {
+    const token = localStorage.getItem('token');
+    if (token) {
+      this.token = token;
+      this.authStatusListener.next(true);
+    }
+  }
+
   login(email: string, password: string) {
     const authData: AuthData = {
       email: email,
@@ -45,6 +53,7 @@ export class AuthService {
       .subscribe(response => {
         if (response.type === 'success') {
           this.token = response.token;
+          localStorage.setItem('token', this.token);
           this.authStatusListener.next(true);
           this.router.navigate(['/']);
         }
@@ -59,6 +68,7 @@ export class AuthService {
 
   logout() {
     this.token = null;
+    localStorage.removeItem('token');
     this.authStatusListener.next(false);
     this.router.navigate(['/login']);
   }

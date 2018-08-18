@@ -8,6 +8,7 @@ import { StudentEditComponent } from './students/student-edit/student-edit.compo
 import { CanDeactivateGuard } from './services/guards/can-deactivate-guard.service';
 import { LoginComponent } from './login/login.component';
 import { AuthGuard } from './services/guards/auth-guard.service';
+import { LoginGuard } from './services/guards/login-guard.service';
 
 const appRoutes: Routes = [
   { path: '', component: HomeComponent },
@@ -20,14 +21,14 @@ const appRoutes: Routes = [
       { path: ':id/edit', component: StudentEditComponent, canDeactivate: [CanDeactivateGuard] }
     ]
   },
-  { path: 'login', component: LoginComponent },
+  { path: 'login', component: LoginComponent, canActivate: [LoginGuard] },
   { path: '**', redirectTo: '/' }
 ];
 
 @NgModule({
   imports: [RouterModule.forRoot(appRoutes)],
   exports: [RouterModule],
-  providers: [CanDeactivateGuard, AuthGuard]
+  providers: [CanDeactivateGuard, AuthGuard, LoginGuard]
 })
 export class AppRoutingModule {
 
