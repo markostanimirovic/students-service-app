@@ -5,7 +5,7 @@ import { Subject } from 'rxjs';
 import { map } from 'rxjs/internal/operators';
 import { MessagesService } from '../messages.service';
 import { environment } from '../../../environments/environment';
-import { AuthService } from '../guards/auth.service';
+import { AuthService } from '../auth.service';
 
 const BACKEND_URL = environment.apiUrl + '/students/';
 

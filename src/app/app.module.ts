@@ -22,7 +22,7 @@ import { LoginComponent } from './login/login.component';
 import { StudentsService } from './services/data/students.service';
 import { MessagesService } from './services/messages.service';
 import { PlacesService } from './services/data/places.service';
-import { AuthService } from './services/guards/auth.service';
+import { AuthService } from './services/auth.service';
 import { AuthInterceptor } from './services/interceptors/auth-interceptor';
 
 @NgModule({
